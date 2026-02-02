@@ -5,3 +5,4 @@
 .DS_STORE
 .claude
 *.png
+node_modules
