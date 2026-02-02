@@ -171,7 +171,7 @@ function FlowInner() {
 export default function FunnelFlow() {
   return (
     <Card title="Interactive Process Flow" subtitle="Click a node to highlight connections" className="lg:col-span-2" noPadding>
-      <div className="h-[650px] rounded-b-2xl overflow-hidden">
+      <div className="h-[400px] sm:h-[500px] md:h-[650px] rounded-b-2xl overflow-hidden">
         <ReactFlowProvider>
           <FlowInner />
         </ReactFlowProvider>

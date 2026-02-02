@@ -32,28 +32,31 @@ export default function ConversionFunnel() {
               transition={{ delay: i * 0.08, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
               className="group cursor-default"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-40 shrink-0 text-right pr-2">
-                  <div className="text-sm font-semibold text-[var(--color-text)]">{stage.label}</div>
-                  <div className="text-[11px] text-[var(--color-text-muted)]">{stage.nameAz}</div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                <div className="flex items-center justify-between sm:block sm:w-40 shrink-0 sm:text-right sm:pr-2">
+                  <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)]">{stage.label}</div>
+                  <div className="flex items-center gap-2 sm:block">
+                    <span className="text-[11px] text-[var(--color-text-muted)] hidden sm:block">{stage.nameAz}</span>
+                    <span className="text-xs font-bold sm:hidden" style={{ color: stage.color }}>{pctOfTotal}%</span>
+                  </div>
                 </div>
                 <div className="flex-1 relative">
-                  <div className="h-11 bg-[var(--color-surface-hover)] rounded-xl overflow-hidden">
+                  <div className="h-8 sm:h-11 bg-[var(--color-surface-hover)] rounded-xl overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${widthPct}%` }}
                       transition={{ delay: i * 0.08 + 0.2, duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-                      className="h-full rounded-xl flex items-center px-4 group-hover:brightness-110 transition-all relative overflow-hidden"
+                      className="h-full rounded-xl flex items-center px-2 sm:px-4 group-hover:brightness-110 transition-all relative overflow-hidden"
                       style={{ backgroundColor: stage.color }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent" />
-                      <span className="text-white text-sm font-bold whitespace-nowrap relative z-10 drop-shadow-sm">
+                      <span className="text-white text-xs sm:text-sm font-bold whitespace-nowrap relative z-10 drop-shadow-sm">
                         {formatNumber(stage.count)}
                       </span>
                     </motion.div>
                   </div>
                 </div>
-                <div className="w-20 text-right shrink-0">
+                <div className="hidden sm:block w-20 text-right shrink-0">
                   <span className="text-sm font-bold" style={{ color: stage.color }}>{pctOfTotal}%</span>
                   {dropPct && (
                     <div className="text-[10px] text-red-400 font-medium">-{dropPct}% drop</div>

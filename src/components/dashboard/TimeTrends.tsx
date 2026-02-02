@@ -25,7 +25,7 @@ function CustomTooltip({ active, payload, label }: any) {
 export default function TimeTrends() {
   return (
     <Card title="Monthly Trends" subtitle="12-month application volume">
-      <div className="h-80">
+      <div className="h-60 sm:h-72 md:h-80">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={timeData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
             <defs>

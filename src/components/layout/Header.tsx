@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-[var(--color-surface)]/70 border-b border-[var(--color-border)]">
-      <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 h-14 sm:h-16 flex items-center justify-between">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}

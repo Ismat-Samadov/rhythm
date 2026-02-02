@@ -29,17 +29,17 @@ export default function StageBreakdown() {
               transition={{ delay: i * 0.04, ease: [0.4, 0, 0.2, 1] }}
               className="group p-3 rounded-xl hover:bg-[var(--color-surface-hover)] transition-colors"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-1 sm:gap-0">
+                <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
                   <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
-                  <span className="text-sm font-medium text-[var(--color-text)]">{stage.name}</span>
-                  <ArrowRight size={10} className="text-[var(--color-text-muted)]" />
-                  <span className="text-xs text-[var(--color-text-muted)]">{stage.nameAz}</span>
+                  <span className="text-xs sm:text-sm font-medium text-[var(--color-text)] truncate">{stage.name}</span>
+                  <ArrowRight size={10} className="text-[var(--color-text-muted)] hidden sm:block shrink-0" />
+                  <span className="text-xs text-[var(--color-text-muted)] hidden sm:block truncate">{stage.nameAz}</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-[var(--color-text)] tabular-nums">{formatNumber(stage.count)}</span>
+                <div className="flex items-center gap-2 sm:gap-3 pl-3.5 sm:pl-0">
+                  <span className="text-xs sm:text-sm font-bold text-[var(--color-text)] tabular-nums">{formatNumber(stage.count)}</span>
                   {stage.dropoff > 0 && (
-                    <span className="flex items-center gap-0.5 text-[11px] text-red-400 font-semibold bg-red-500/10 px-1.5 py-0.5 rounded-md">
+                    <span className="flex items-center gap-0.5 text-[10px] sm:text-[11px] text-red-400 font-semibold bg-red-500/10 px-1.5 py-0.5 rounded-md">
                       <TrendingDown size={10} />
                       {stage.dropoff}%
                     </span>

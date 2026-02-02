@@ -94,13 +94,13 @@ export default function SankeyChart() {
 
   return (
     <Card title="Flow Visualization" subtitle="Volume distribution across all stages">
-      <div className="h-[500px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[300px] sm:h-[400px] md:h-[500px] overflow-x-auto">
+        <ResponsiveContainer width="100%" height="100%" minWidth={500}>
           <Sankey
             data={data}
             nodeWidth={8}
-            nodePadding={20}
-            margin={{ top: 10, right: 160, bottom: 10, left: 10 }}
+            nodePadding={16}
+            margin={{ top: 10, right: 120, bottom: 10, left: 10 }}
             link={<SankeyLink />}
             node={<SankeyNode />}
           >

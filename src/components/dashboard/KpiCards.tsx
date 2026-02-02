@@ -12,7 +12,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 export default function KpiCards() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
       {kpiData.map((kpi, i) => {
         const Icon = iconMap[kpi.icon] || FileText;
         const formatter = kpi.format === 'percent'
@@ -28,7 +28,7 @@ export default function KpiCards() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06, duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
             whileHover={{ y: -3 }}
-            className="card-glow bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-4 cursor-default relative z-10 group"
+            className="card-glow bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl sm:rounded-2xl p-3 sm:p-4 cursor-default relative z-10 group"
           >
             <div className="flex items-center justify-between mb-3">
               <div
@@ -45,7 +45,7 @@ export default function KpiCards() {
                 {kpi.change > 0 ? '↑' : '↓'} {Math.abs(kpi.change)}%
               </div>
             </div>
-            <div className="text-[22px] font-bold text-[var(--color-text)] tracking-tight leading-none">
+            <div className="text-lg sm:text-[22px] font-bold text-[var(--color-text)] tracking-tight leading-none">
               <AnimatedNumber value={kpi.value} format={formatter} />
             </div>
             <div className="text-[11px] text-[var(--color-text-muted)] mt-1.5 font-medium">{kpi.label}</div>

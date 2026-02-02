@@ -25,7 +25,7 @@ function CustomTooltip({ active, payload, label }: any) {
 export default function SourceComparison() {
   return (
     <Card title="Source Channels" subtitle="Performance by acquisition channel">
-      <div className="h-80">
+      <div className="h-60 sm:h-72 md:h-80">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={sourceChannels} margin={{ top: 5, right: 10, left: -10, bottom: 5 }} barCategoryGap="20%">
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.5} vertical={false} />
