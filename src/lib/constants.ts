@@ -1,0 +1,26 @@
+export const COLORS = {
+  primary: '#1e3a5f',
+  primaryLight: '#2d5a8e',
+  accent: '#2dd4bf',
+  success: '#22c55e',
+  warning: '#f59e0b',
+  danger: '#ef4444',
+  info: '#3b82f6',
+  sources: {
+    dostbank: '#3b82f6',
+    bolkart: '#8b5cf6',
+    bankofbaku: '#06b6d4',
+    callCenter: '#f97316',
+    socialMedia: '#ec4899',
+  },
+  funnel: [
+    '#3b82f6',
+    '#2d5a8e',
+    '#6366f1',
+    '#8b5cf6',
+    '#a855f7',
+    '#06b6d4',
+    '#14b8a6',
+    '#22c55e',
+  ],
+} as const;
