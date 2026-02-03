@@ -111,6 +111,14 @@ export default function SankeyChart() {
                 borderRadius: 12,
                 fontSize: 11,
                 boxShadow: 'var(--shadow-lg)',
+                color: 'var(--color-text)',
+              }}
+              itemStyle={{
+                color: 'var(--color-text-secondary)',
+              }}
+              labelStyle={{
+                color: 'var(--color-text)',
+                fontWeight: 600,
               }}
             />
           </Sankey>

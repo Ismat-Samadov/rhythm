@@ -92,27 +92,29 @@ const initialNodes: Node[] = [
   { id: 'final_reject', position: { x: 500, y: 930 }, data: { label: 'Rejected', labelAz: 'İmtina edilir', count: 1800, type: 'reject', tooltip: 'Final rejection after analysis' }, type: 'flowNode' },
 ];
 
+const labelBgStyle = { fill: 'var(--color-surface)', fillOpacity: 0.9, rx: 4, ry: 4 };
+
 const initialEdges: Edge[] = [
   { id: 'e-entry-ts', source: 'entry', target: 'telesales', animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } },
-  { id: 'e-dost-ts', source: 'dostbank', target: 'telesales', style: { stroke: '#6366f160' } },
-  { id: 'e-bol-ts', source: 'bolkart', target: 'telesales', style: { stroke: '#8b5cf660' } },
-  { id: 'e-bob-ts', source: 'bankofbaku', target: 'telesales', style: { stroke: '#06b6d460' } },
-  { id: 'e-cc-ts', source: 'callcenter', target: 'telesales', style: { stroke: '#f9731660' } },
-  { id: 'e-soc-ts', source: 'social', target: 'telesales', style: { stroke: '#ec489960' } },
+  { id: 'e-dost-ts', source: 'dostbank', target: 'telesales', style: { stroke: '#6366f180' } },
+  { id: 'e-bol-ts', source: 'bolkart', target: 'telesales', style: { stroke: '#8b5cf680' } },
+  { id: 'e-bob-ts', source: 'bankofbaku', target: 'telesales', style: { stroke: '#06b6d480' } },
+  { id: 'e-cc-ts', source: 'callcenter', target: 'telesales', style: { stroke: '#f9731680' } },
+  { id: 'e-soc-ts', source: 'social', target: 'telesales', style: { stroke: '#ec489980' } },
   { id: 'e-ts-call', source: 'telesales', target: 'tele_call', animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } },
   { id: 'e-call-result', source: 'tele_call', target: 'call_result', animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } },
-  { id: 'e-result-unreach', source: 'call_result', sourceHandle: 'right', target: 'unreachable', targetHandle: 'left', label: '2,100', style: { stroke: '#f59e0b' }, labelStyle: { fontSize: 9, fill: '#f59e0b', fontWeight: 600 } },
-  { id: 'e-result-reject', source: 'tele_call', sourceHandle: 'right', target: 'tele_reject', targetHandle: 'left', label: '2,150', style: { stroke: '#ef4444' }, labelStyle: { fontSize: 9, fill: '#ef4444', fontWeight: 600 } },
-  { id: 'e-result-scoring', source: 'call_result', target: 'scoring', label: '8,200', style: { stroke: '#10b981' }, labelStyle: { fontSize: 9, fill: '#10b981', fontWeight: 600 } },
-  { id: 'e-score-online', source: 'scoring', target: 'online_pool', animated: true, style: { stroke: '#3b82f6', strokeWidth: 2 }, label: '7,500', labelStyle: { fontSize: 9, fill: '#3b82f6', fontWeight: 600 } },
+  { id: 'e-result-unreach', source: 'call_result', sourceHandle: 'right', target: 'unreachable', targetHandle: 'left', label: '2,100', style: { stroke: '#f59e0b' }, labelStyle: { fontSize: 9, fill: '#f59e0b', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
+  { id: 'e-result-reject', source: 'tele_call', sourceHandle: 'right', target: 'tele_reject', targetHandle: 'left', label: '2,150', style: { stroke: '#ef4444' }, labelStyle: { fontSize: 9, fill: '#ef4444', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
+  { id: 'e-result-scoring', source: 'call_result', target: 'scoring', label: '8,200', style: { stroke: '#10b981' }, labelStyle: { fontSize: 9, fill: '#10b981', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
+  { id: 'e-score-online', source: 'scoring', target: 'online_pool', animated: true, style: { stroke: '#3b82f6', strokeWidth: 2 }, label: '7,500', labelStyle: { fontSize: 9, fill: '#3b82f6', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
   { id: 'e-op-call', source: 'online_pool', target: 'online_call', animated: true, style: { stroke: '#0ea5e9', strokeWidth: 2 } },
   { id: 'e-oc-analysis', source: 'online_call', target: 'analysis', animated: true, style: { stroke: '#0ea5e9', strokeWidth: 2 } },
-  { id: 'e-analysis-branch', source: 'analysis', target: 'branch_sale', label: '2,500', style: { stroke: '#10b981' }, labelStyle: { fontSize: 9, fill: '#10b981', fontWeight: 600 } },
-  { id: 'e-analysis-online', source: 'analysis', target: 'online_sale', label: '1,700', style: { stroke: '#10b981' }, labelStyle: { fontSize: 9, fill: '#10b981', fontWeight: 600 } },
-  { id: 'e-analysis-kbd', source: 'analysis', sourceHandle: 'right', target: 'kbd', targetHandle: 'left', label: '1,500', style: { stroke: '#f59e0b' }, labelStyle: { fontSize: 9, fill: '#f59e0b', fontWeight: 600 } },
-  { id: 'e-analysis-reject', source: 'analysis', sourceHandle: 'right', target: 'final_reject', label: '1,800', style: { stroke: '#ef4444' }, labelStyle: { fontSize: 9, fill: '#ef4444', fontWeight: 600 } },
-  { id: 'e-kbd-reject', source: 'kbd', target: 'final_reject', style: { stroke: '#ef444460' } },
-  { id: 'e-unreach-ts', source: 'unreachable', sourceHandle: 'right', target: 'telesales', targetHandle: 'right', label: 'Re-queue', style: { stroke: '#f59e0b', strokeDasharray: '5 5' }, labelStyle: { fontSize: 8, fill: '#f59e0b' }, type: 'smoothstep' },
+  { id: 'e-analysis-branch', source: 'analysis', target: 'branch_sale', label: '2,500', style: { stroke: '#10b981' }, labelStyle: { fontSize: 9, fill: '#10b981', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
+  { id: 'e-analysis-online', source: 'analysis', target: 'online_sale', label: '1,700', style: { stroke: '#10b981' }, labelStyle: { fontSize: 9, fill: '#10b981', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
+  { id: 'e-analysis-kbd', source: 'analysis', sourceHandle: 'right', target: 'kbd', targetHandle: 'left', label: '1,500', style: { stroke: '#f59e0b' }, labelStyle: { fontSize: 9, fill: '#f59e0b', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
+  { id: 'e-analysis-reject', source: 'analysis', sourceHandle: 'right', target: 'final_reject', label: '1,800', style: { stroke: '#ef4444' }, labelStyle: { fontSize: 9, fill: '#ef4444', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
+  { id: 'e-kbd-reject', source: 'kbd', target: 'final_reject', style: { stroke: '#ef444480' } },
+  { id: 'e-unreach-ts', source: 'unreachable', sourceHandle: 'right', target: 'telesales', targetHandle: 'right', label: 'Re-queue', style: { stroke: '#f59e0b', strokeDasharray: '5 5' }, labelStyle: { fontSize: 8, fill: '#f59e0b' }, labelBgStyle, labelBgPadding: [4, 2] as [number, number], type: 'smoothstep' },
 ];
 
 function FlowInner() {
@@ -160,7 +162,6 @@ function FlowInner() {
           if (type === 'decision') return '#f59e0b';
           return '#3b82f6';
         }}
-        maskColor="rgba(0,0,0,0.15)"
         className="!bg-[var(--color-surface)] !border-[var(--color-border)]"
         style={{ borderRadius: 12 }}
       />

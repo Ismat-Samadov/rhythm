@@ -100,24 +100,64 @@ body::before {
 .react-flow__minimap {
   border-radius: 12px !important;
   overflow: hidden;
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.react-flow__minimap-mask {
+  fill: var(--color-bg) !important;
+  fill-opacity: 0.85 !important;
 }
 .react-flow__controls {
   border-radius: 12px !important;
   overflow: hidden;
+  box-shadow: var(--shadow-md) !important;
 }
 .react-flow__controls button {
-  background-color: var(--color-surface) !important;
-  border-color: var(--color-border) !important;
-  color: var(--color-text-secondary) !important;
+  background-color: var(--color-surface-elevated) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text) !important;
+  width: 28px !important;
+  height: 28px !important;
 }
 .react-flow__controls button:hover {
   background-color: var(--color-surface-hover) !important;
+  color: var(--color-accent) !important;
+}
+.react-flow__controls button svg {
+  fill: currentColor !important;
+}
+.react-flow__controls button svg path {
+  fill: currentColor !important;
 }
 .react-flow__attribution {
   display: none !important;
+}
+.react-flow__edge-textbg {
+  fill: var(--color-surface) !important;
+}
+.react-flow__edge-text {
+  fill: var(--color-text) !important;
+}
+.react-flow__background {
+  background-color: var(--color-bg) !important;
 }
 
 /* Recharts overrides */
 .recharts-default-tooltip {
   backdrop-filter: blur(12px) !important;
+  background-color: var(--color-surface-elevated) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 12px !important;
+}
+.recharts-tooltip-label {
+  color: var(--color-text) !important;
+}
+.recharts-tooltip-item {
+  color: var(--color-text-secondary) !important;
+}
+.recharts-legend-item-text {
+  color: var(--color-text-secondary) !important;
+}
+.recharts-cartesian-axis-tick-value {
+  fill: var(--color-text-muted) !important;
 }

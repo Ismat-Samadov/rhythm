@@ -5,6 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Funnel Analysis | Cash Loan Dashboard",
   description: "Interactive funnel analysis dashboard for cash loan applications",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
