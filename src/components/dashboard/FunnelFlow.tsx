@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, memo } from "react";
 import ReactFlow, {
   Node,
   Edge,
@@ -13,10 +13,11 @@ import ReactFlow, {
   ReactFlowProvider,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import { GitBranch } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { formatNumber } from "@/lib/utils";
 
-function FlowNode({ data }: NodeProps) {
+const FlowNode = memo(function FlowNode({ data }: NodeProps) {
   const [hovered, setHovered] = useState(false);
 
   const styles: Record<string, { bg: string; border: string; shadow: string }> = {
@@ -28,37 +29,56 @@ function FlowNode({ data }: NodeProps) {
     entry: { bg: 'linear-gradient(135deg, #7c3aed, #6d28d9)', border: '#a78bfa', shadow: 'rgba(139, 92, 246, 0.3)' },
   };
 
-  const s = styles[data.type] || styles.process;
+  const s = styles[data?.type] || styles.process;
+  const count = data?.count;
+  const hasCount = count !== undefined && count !== null;
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
       className="relative"
+      role="button"
+      tabIndex={0}
+      aria-label={`${data?.label || 'Node'}${hasCount ? `: ${formatNumber(count)}` : ''}`}
     >
       <Handle type="target" position={Position.Top} className="!bg-white/40 !w-1.5 !h-1.5 !border-0" />
       <Handle type="target" position={Position.Left} id="left" className="!bg-white/40 !w-1.5 !h-1.5 !border-0" />
       <div
-        className="px-4 py-3 text-white text-center transition-all duration-200"
+        className="px-3 sm:px-4 py-2 sm:py-3 text-white text-center transition-all duration-200"
         style={{
           background: s.bg,
-          minWidth: 130,
-          borderRadius: data.type === 'decision' ? 12 : 12,
-          border: `1.5px solid ${hovered ? s.border : 'rgba(255,255,255,0.1)'}`,
+          minWidth: 100,
+          maxWidth: 160,
+          borderRadius: 12,
+          border: `1.5px solid ${hovered ? s.border : 'rgba(255,255,255,0.15)'}`,
           boxShadow: hovered
             ? `0 0 24px ${s.shadow}, 0 4px 16px rgba(0,0,0,0.2)`
             : '0 2px 8px rgba(0,0,0,0.15)',
           transform: hovered ? 'scale(1.03)' : 'scale(1)',
         }}
       >
-        <div className="text-[11px] font-semibold leading-tight">{data.label}</div>
-        {data.labelAz && <div className="text-[9px] opacity-60 mt-0.5 font-medium">{data.labelAz}</div>}
-        {data.count !== undefined && (
-          <div className="text-[13px] font-bold mt-1.5 tracking-tight">{formatNumber(data.count)}</div>
+        <div className="text-[10px] sm:text-[11px] font-semibold leading-tight truncate">
+          {data?.label || 'Unknown'}
+        </div>
+        {data?.labelAz && (
+          <div className="text-[8px] sm:text-[9px] opacity-70 mt-0.5 font-medium truncate">
+            {data.labelAz}
+          </div>
+        )}
+        {hasCount && (
+          <div className="text-[12px] sm:text-[13px] font-bold mt-1 sm:mt-1.5 tracking-tight">
+            {formatNumber(count)}
+          </div>
         )}
       </div>
-      {hovered && data.tooltip && (
-        <div className="absolute -top-11 left-1/2 -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm text-white text-[10px] px-3 py-1.5 rounded-lg shadow-xl whitespace-nowrap z-50 pointer-events-none border border-white/10">
+      {hovered && data?.tooltip && (
+        <div
+          className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 bg-[var(--color-surface-elevated)] border border-[var(--color-border)] text-[var(--color-text)] text-[9px] sm:text-[10px] px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-xl whitespace-nowrap z-50 pointer-events-none"
+          role="tooltip"
+        >
           {data.tooltip}
         </div>
       )}
@@ -66,7 +86,7 @@ function FlowNode({ data }: NodeProps) {
       <Handle type="source" position={Position.Right} id="right" className="!bg-white/40 !w-1.5 !h-1.5 !border-0" />
     </div>
   );
-}
+});
 
 const nodeTypes = { flowNode: FlowNode };
 
@@ -76,10 +96,10 @@ const initialNodes: Node[] = [
   { id: 'bolkart', position: { x: 210, y: 100 }, data: { label: 'bolkart.az', count: 2800, type: 'source', tooltip: '22.5% of applications' }, type: 'flowNode' },
   { id: 'bankofbaku', position: { x: 390, y: 100 }, data: { label: 'bankofbaku.com', count: 2100, type: 'source', tooltip: '16.9% of applications' }, type: 'flowNode' },
   { id: 'callcenter', position: { x: 580, y: 100 }, data: { label: '145 Call Center', count: 1950, type: 'source', tooltip: '15.7% of applications' }, type: 'flowNode' },
-  { id: 'social', position: { x: 770, y: 100 }, data: { label: 'Social Media (Lead)', count: 2400, type: 'source', tooltip: '19.3% of applications' }, type: 'flowNode' },
+  { id: 'social', position: { x: 770, y: 100 }, data: { label: 'Social Media', count: 2400, type: 'source', tooltip: '19.3% of applications' }, type: 'flowNode' },
   { id: 'telesales', position: { x: 400, y: 230 }, data: { label: 'Telesales Pool', labelAz: 'Hovuz (Telesatış)', count: 12450, type: 'process', tooltip: 'All applications enter telesales' }, type: 'flowNode' },
   { id: 'tele_call', position: { x: 400, y: 350 }, data: { label: 'Rep Calls Customer', labelAz: 'Müştəriyə zəng edir', count: 10350, type: 'process', tooltip: 'Telesales rep clicks Next and calls' }, type: 'flowNode' },
-  { id: 'call_result', position: { x: 400, y: 470 }, data: { label: 'Call Result', labelAz: 'Müraciət emal edilir', type: 'decision', tooltip: 'Application processed after call' }, type: 'flowNode' },
+  { id: 'call_result', position: { x: 400, y: 470 }, data: { label: 'Call Result', labelAz: 'Müraciət emal edilir', count: 10350, type: 'decision', tooltip: 'Application processed after call' }, type: 'flowNode' },
   { id: 'unreachable', position: { x: 720, y: 470 }, data: { label: 'Unreachable', labelAz: 'Zəng çatmır', count: 2100, type: 'reject', tooltip: 'Re-added to pool after few days' }, type: 'flowNode' },
   { id: 'tele_reject', position: { x: 720, y: 350 }, data: { label: 'Rejected', labelAz: 'İmtina', count: 2150, type: 'reject', tooltip: 'Rejected at telesales stage' }, type: 'flowNode' },
   { id: 'scoring', position: { x: 100, y: 420 }, data: { label: 'Scoring Stage', labelAz: 'Scoring mərhələsi', count: 8200, type: 'process', tooltip: 'Credit scoring evaluation' }, type: 'flowNode' },
@@ -92,15 +112,15 @@ const initialNodes: Node[] = [
   { id: 'final_reject', position: { x: 500, y: 930 }, data: { label: 'Rejected', labelAz: 'İmtina edilir', count: 1800, type: 'reject', tooltip: 'Final rejection after analysis' }, type: 'flowNode' },
 ];
 
-const labelBgStyle = { fill: 'var(--color-surface)', fillOpacity: 0.9, rx: 4, ry: 4 };
+const labelBgStyle = { fill: 'var(--color-surface)', fillOpacity: 0.95, rx: 4, ry: 4 };
 
 const initialEdges: Edge[] = [
   { id: 'e-entry-ts', source: 'entry', target: 'telesales', animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } },
-  { id: 'e-dost-ts', source: 'dostbank', target: 'telesales', style: { stroke: '#6366f180' } },
-  { id: 'e-bol-ts', source: 'bolkart', target: 'telesales', style: { stroke: '#8b5cf680' } },
-  { id: 'e-bob-ts', source: 'bankofbaku', target: 'telesales', style: { stroke: '#06b6d480' } },
-  { id: 'e-cc-ts', source: 'callcenter', target: 'telesales', style: { stroke: '#f9731680' } },
-  { id: 'e-soc-ts', source: 'social', target: 'telesales', style: { stroke: '#ec489980' } },
+  { id: 'e-dost-ts', source: 'dostbank', target: 'telesales', style: { stroke: '#6366f1', strokeWidth: 1.5, opacity: 0.6 } },
+  { id: 'e-bol-ts', source: 'bolkart', target: 'telesales', style: { stroke: '#8b5cf6', strokeWidth: 1.5, opacity: 0.6 } },
+  { id: 'e-bob-ts', source: 'bankofbaku', target: 'telesales', style: { stroke: '#06b6d4', strokeWidth: 1.5, opacity: 0.6 } },
+  { id: 'e-cc-ts', source: 'callcenter', target: 'telesales', style: { stroke: '#f97316', strokeWidth: 1.5, opacity: 0.6 } },
+  { id: 'e-soc-ts', source: 'social', target: 'telesales', style: { stroke: '#ec4899', strokeWidth: 1.5, opacity: 0.6 } },
   { id: 'e-ts-call', source: 'telesales', target: 'tele_call', animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } },
   { id: 'e-call-result', source: 'tele_call', target: 'call_result', animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } },
   { id: 'e-result-unreach', source: 'call_result', sourceHandle: 'right', target: 'unreachable', targetHandle: 'left', label: '2,100', style: { stroke: '#f59e0b' }, labelStyle: { fontSize: 9, fill: '#f59e0b', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
@@ -113,14 +133,14 @@ const initialEdges: Edge[] = [
   { id: 'e-analysis-online', source: 'analysis', target: 'online_sale', label: '1,700', style: { stroke: '#10b981' }, labelStyle: { fontSize: 9, fill: '#10b981', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
   { id: 'e-analysis-kbd', source: 'analysis', sourceHandle: 'right', target: 'kbd', targetHandle: 'left', label: '1,500', style: { stroke: '#f59e0b' }, labelStyle: { fontSize: 9, fill: '#f59e0b', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
   { id: 'e-analysis-reject', source: 'analysis', sourceHandle: 'right', target: 'final_reject', label: '1,800', style: { stroke: '#ef4444' }, labelStyle: { fontSize: 9, fill: '#ef4444', fontWeight: 600 }, labelBgStyle, labelBgPadding: [4, 2] as [number, number] },
-  { id: 'e-kbd-reject', source: 'kbd', target: 'final_reject', style: { stroke: '#ef444480' } },
+  { id: 'e-kbd-reject', source: 'kbd', target: 'final_reject', style: { stroke: '#ef4444', strokeWidth: 1, opacity: 0.5 } },
   { id: 'e-unreach-ts', source: 'unreachable', sourceHandle: 'right', target: 'telesales', targetHandle: 'right', label: 'Re-queue', style: { stroke: '#f59e0b', strokeDasharray: '5 5' }, labelStyle: { fontSize: 8, fill: '#f59e0b' }, labelBgStyle, labelBgPadding: [4, 2] as [number, number], type: 'smoothstep' },
 ];
 
 function FlowInner() {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
-  const onNodeClick = useCallback((_: any, node: Node) => {
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     setSelectedNode(prev => prev === node.id ? null : node.id);
   }, []);
 
@@ -146,13 +166,13 @@ function FlowInner() {
       onNodeClick={onNodeClick}
       onPaneClick={() => setSelectedNode(null)}
       fitView
-      fitViewOptions={{ padding: 0.15 }}
-      minZoom={0.3}
+      fitViewOptions={{ padding: 0.12 }}
+      minZoom={0.25}
       maxZoom={1.5}
       proOptions={{ hideAttribution: true }}
     >
       <Background color="var(--color-border)" gap={24} size={1} />
-      <Controls />
+      <Controls showInteractive={false} />
       <MiniMap
         nodeColor={(n) => {
           const type = n.data?.type;
@@ -164,15 +184,36 @@ function FlowInner() {
         }}
         className="!bg-[var(--color-surface)] !border-[var(--color-border)]"
         style={{ borderRadius: 12 }}
+        pannable
+        zoomable
       />
     </ReactFlow>
   );
 }
 
 export default function FunnelFlow() {
+  // Handle edge case: empty nodes
+  if (!initialNodes || initialNodes.length === 0) {
+    return (
+      <Card title="Interactive Process Flow" subtitle="Click a node to highlight connections" className="lg:col-span-2">
+        <div className="h-[400px] sm:h-[500px] md:h-[650px] empty-state">
+          <GitBranch size={32} className="mb-3 opacity-50" />
+          <span className="text-sm text-[var(--color-text-muted)]">No flow data available</span>
+        </div>
+      </Card>
+    );
+  }
+
   return (
-    <Card title="Interactive Process Flow" subtitle="Click a node to highlight connections" className="lg:col-span-2" noPadding>
-      <div className="h-[400px] sm:h-[500px] md:h-[650px] rounded-b-2xl overflow-hidden">
+    <Card
+      title="Interactive Process Flow"
+      subtitle="Click a node to highlight connections"
+      className="lg:col-span-2"
+      noPadding
+      role="img"
+      ariaLabel="Interactive flow diagram showing the application process from receipt through various stages to final outcomes"
+    >
+      <div className="h-[350px] sm:h-[450px] md:h-[550px] lg:h-[650px] rounded-b-xl sm:rounded-b-2xl overflow-hidden">
         <ReactFlowProvider>
           <FlowInner />
         </ReactFlowProvider>

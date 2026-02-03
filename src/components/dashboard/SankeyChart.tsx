@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useRef, useEffect, useState } from "react";
 import { Sankey, Tooltip, ResponsiveContainer, Layer, Rectangle } from "recharts";
+import { GitBranch, ChevronRight } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { sankeyNodes, sankeyLinks } from "@/lib/data";
 
@@ -24,8 +25,9 @@ const NODE_COLORS: Record<string, string> = {
   'Rejected': '#ef4444',
 };
 
-function SankeyNode({ x, y, width, height, index, payload }: any) {
-  const color = NODE_COLORS[payload.name] || '#6366f1';
+const SankeyNode = memo(function SankeyNode({ x, y, width, height, index, payload }: any) {
+  const color = NODE_COLORS[payload?.name] || '#6366f1';
+
   return (
     <Layer key={`node-${index}`}>
       <Rectangle
@@ -46,25 +48,37 @@ function SankeyNode({ x, y, width, height, index, payload }: any) {
         fontSize={10}
         fontWeight={500}
         fill="var(--color-text-secondary)"
+        className="select-none"
       >
-        {payload.name}
+        {payload?.name || ''}
       </text>
     </Layer>
   );
-}
+});
 
-function SankeyLink({ sourceX, targetX, sourceY, targetY, sourceControlX, targetControlX, linkWidth, payload }: any) {
-  const sourceColor = NODE_COLORS[payload.source?.name] || '#6366f1';
-  const targetColor = NODE_COLORS[payload.target?.name] || '#6366f1';
-  const isReject = payload.target?.name === 'Rejected' || payload.target?.name === 'Unreachable' || payload.target?.name === 'Not Suitable';
-  const color = isReject ? '#ef4444' : sourceColor;
+const SankeyLink = memo(function SankeyLink({
+  sourceX,
+  targetX,
+  sourceY,
+  targetY,
+  sourceControlX,
+  targetControlX,
+  linkWidth,
+  payload,
+}: any) {
+  const sourceColor = NODE_COLORS[payload?.source?.name] || '#6366f1';
+  const targetColor = NODE_COLORS[payload?.target?.name] || '#6366f1';
+  const isReject = payload?.target?.name === 'Rejected' ||
+    payload?.target?.name === 'Unreachable' ||
+    payload?.target?.name === 'Not Suitable';
+  const gradientId = `link-grad-${payload?.source?.name || 'src'}-${payload?.target?.name || 'tgt'}-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
     <Layer>
       <defs>
-        <linearGradient id={`link-grad-${payload.source?.name}-${payload.target?.name}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={sourceColor} stopOpacity={0.2} />
-          <stop offset="100%" stopColor={targetColor} stopOpacity={0.2} />
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={sourceColor} stopOpacity={0.25} />
+          <stop offset="100%" stopColor={targetColor} stopOpacity={0.25} />
         </linearGradient>
       </defs>
       <path
@@ -79,50 +93,99 @@ function SankeyLink({ sourceX, targetX, sourceY, targetY, sourceControlX, target
             ${sourceX},${sourceY - linkWidth / 2}
           Z
         `}
-        fill={`url(#link-grad-${payload.source?.name}-${payload.target?.name})`}
-        stroke={color}
-        strokeOpacity={0.15}
+        fill={`url(#${gradientId})`}
+        stroke={isReject ? '#ef4444' : sourceColor}
+        strokeOpacity={0.2}
         strokeWidth={0.5}
         className="transition-opacity hover:!opacity-80"
       />
     </Layer>
   );
-}
+});
+
+// Memoized tooltip
+const CustomTooltip = memo(function CustomTooltip({ active, payload }: any) {
+  if (!active || !payload || payload.length === 0) return null;
+
+  const data = payload[0]?.payload;
+  if (!data) return null;
+
+  return (
+    <div className="bg-[var(--color-surface-elevated)] border border-[var(--color-border)] rounded-xl shadow-[var(--shadow-lg)] p-3 backdrop-blur-xl">
+      <p className="text-xs font-semibold text-[var(--color-text)] mb-1">
+        {data.source?.name || data.name} → {data.target?.name || ''}
+      </p>
+      {data.value !== undefined && (
+        <p className="text-[11px] text-[var(--color-text-secondary)]">
+          Volume: <span className="font-semibold text-[var(--color-text)]">{data.value.toLocaleString()}</span>
+        </p>
+      )}
+    </div>
+  );
+});
 
 export default function SankeyChart() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [hasScroll, setHasScroll] = useState(false);
+
+  // Check if content overflows and needs scroll indicator
+  useEffect(() => {
+    const checkScroll = () => {
+      if (scrollRef.current) {
+        const { scrollWidth, clientWidth } = scrollRef.current;
+        setHasScroll(scrollWidth > clientWidth);
+      }
+    };
+
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, []);
+
+  // Handle edge case: empty data
+  if (!sankeyNodes || sankeyNodes.length === 0 || !sankeyLinks || sankeyLinks.length === 0) {
+    return (
+      <Card title="Flow Visualization" subtitle="Volume distribution across all stages">
+        <div className="h-[300px] sm:h-[400px] md:h-[500px] empty-state">
+          <GitBranch size={32} className="mb-3 opacity-50" />
+          <span className="text-sm text-[var(--color-text-muted)]">No flow data available</span>
+        </div>
+      </Card>
+    );
+  }
+
   const data = { nodes: sankeyNodes, links: sankeyLinks };
 
   return (
-    <Card title="Flow Visualization" subtitle="Volume distribution across all stages">
-      <div className="h-[300px] sm:h-[400px] md:h-[500px] overflow-x-auto">
-        <ResponsiveContainer width="100%" height="100%" minWidth={500}>
-          <Sankey
-            data={data}
-            nodeWidth={8}
-            nodePadding={16}
-            margin={{ top: 10, right: 120, bottom: 10, left: 10 }}
-            link={<SankeyLink />}
-            node={<SankeyNode />}
-          >
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'var(--color-surface-elevated)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 12,
-                fontSize: 11,
-                boxShadow: 'var(--shadow-lg)',
-                color: 'var(--color-text)',
-              }}
-              itemStyle={{
-                color: 'var(--color-text-secondary)',
-              }}
-              labelStyle={{
-                color: 'var(--color-text)',
-                fontWeight: 600,
-              }}
-            />
-          </Sankey>
-        </ResponsiveContainer>
+    <Card
+      title="Flow Visualization"
+      subtitle="Volume distribution across all stages"
+      role="img"
+      ariaLabel="Sankey diagram showing volume flow from source channels through processing stages to final outcomes"
+    >
+      <div className="relative">
+        {hasScroll && (
+          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[var(--color-surface)] to-transparent z-10 pointer-events-none flex items-center justify-end pr-2">
+            <ChevronRight size={16} className="text-[var(--color-text-muted)] animate-pulse" />
+          </div>
+        )}
+        <div
+          ref={scrollRef}
+          className="h-[280px] sm:h-[360px] md:h-[440px] lg:h-[500px] overflow-x-auto scrollbar-thin"
+        >
+          <ResponsiveContainer width="100%" height="100%" minWidth={480}>
+            <Sankey
+              data={data}
+              nodeWidth={8}
+              nodePadding={14}
+              margin={{ top: 10, right: 100, bottom: 10, left: 10 }}
+              link={<SankeyLink />}
+              node={<SankeyNode />}
+            >
+              <Tooltip content={<CustomTooltip />} />
+            </Sankey>
+          </ResponsiveContainer>
+        </div>
       </div>
     </Card>
   );
